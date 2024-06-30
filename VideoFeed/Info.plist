@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>google sign in</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.824321247584-v770nn5826kcr34vp5p013nn4ug00cap</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>app-1-172453727278-ios-4e6f5b5ecc01fb3d47a3bf</string>
+			</array>
+		</dict>
+	</array>
+	<key>GIDClientID</key>
+	<string>824321247584-v770nn5826kcr34vp5p013nn4ug00cap.apps.googleusercontent.com</string>
+	<key>MBXAccessToken</key>
+	<string>pk.eyJ1IjoiYWJvdXphcm1vcmFkaWFuIiwiYSI6ImNsd3U2MWJoYTBiaTkyanBvYnZoNm84ZDQifQ.YrlCqbSYeqPUF2ieY5ClXg</string>
+	<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>
+	<true/>
+</dict>
+</plist>
