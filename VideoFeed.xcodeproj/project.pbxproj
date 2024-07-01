@@ -39,6 +39,7 @@
 		C92080A62C28A0D700ED5CB4 /* LocationEditOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92080A52C28A0D700ED5CB4 /* LocationEditOptionView.swift */; };
 		C92080A82C29455100ED5CB4 /* UpdateLocationManuallyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92080A72C29455100ED5CB4 /* UpdateLocationManuallyView.swift */; };
 		C92F924E2C2DBDC3000C5930 /* FeedViewNavigationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92F924D2C2DBDC3000C5930 /* FeedViewNavigationExtension.swift */; };
+		C92F92522C332EC1000C5930 /* AssetModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92F92512C332EC1000C5930 /* AssetModel.swift */; };
 		C93BBA962BDE97B800B1A266 /* ImagePickerGridContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93BBA952BDE97B800B1A266 /* ImagePickerGridContentView.swift */; };
 		C93BBA982BDE981500B1A266 /* ImagePickerLibraryGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93BBA972BDE981500B1A266 /* ImagePickerLibraryGridView.swift */; };
 		C93BBA9A2BDE985400B1A266 /* LimitedLibraryPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C93BBA992BDE985400B1A266 /* LimitedLibraryPicker.swift */; };
@@ -281,6 +282,7 @@
 		C92080A52C28A0D700ED5CB4 /* LocationEditOptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationEditOptionView.swift; sourceTree = "<group>"; };
 		C92080A72C29455100ED5CB4 /* UpdateLocationManuallyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateLocationManuallyView.swift; sourceTree = "<group>"; };
 		C92F924D2C2DBDC3000C5930 /* FeedViewNavigationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewNavigationExtension.swift; sourceTree = "<group>"; };
+		C92F92512C332EC1000C5930 /* AssetModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetModel.swift; sourceTree = "<group>"; };
 		C93BBA952BDE97B800B1A266 /* ImagePickerGridContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerGridContentView.swift; sourceTree = "<group>"; };
 		C93BBA972BDE981500B1A266 /* ImagePickerLibraryGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePickerLibraryGridView.swift; sourceTree = "<group>"; };
 		C93BBA992BDE985400B1A266 /* LimitedLibraryPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LimitedLibraryPicker.swift; sourceTree = "<group>"; };
@@ -548,6 +550,23 @@
 			path = Message;
 			sourceTree = "<group>";
 		};
+		C92F924F2C332D87000C5930 /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				C9FC95A92BDA6F700020CD72 /* MapView.swift */,
+			);
+			path = Map;
+			sourceTree = "<group>";
+		};
+		C92F92502C332DC5000C5930 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				C96464E62BD2DCAA00625CCC /* HomeView.swift */,
+				C9D44EED2C1AC3720022B93E /* HomeExtension.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
 		C93BBAC02BDF958100B1A266 /* Profile */ = {
 			isa = PBXGroup;
 			children = (
@@ -642,15 +661,6 @@
 			path = Notification;
 			sourceTree = "<group>";
 		};
-		C96464E52BD2DC7A00625CCC /* Home */ = {
-			isa = PBXGroup;
-			children = (
-				C96464E62BD2DCAA00625CCC /* HomeView.swift */,
-				C9D44EED2C1AC3720022B93E /* HomeExtension.swift */,
-			);
-			path = Home;
-			sourceTree = "<group>";
-		};
 		C96464E82BD4910600625CCC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -698,6 +708,7 @@
 		C96464F02BD6339A00625CCC /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				C92F92512C332EC1000C5930 /* AssetModel.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -792,6 +803,8 @@
 		C9E5D7A22BC23AAA007D9B5F /* VideoFeed */ = {
 			isa = PBXGroup;
 			children = (
+				C92F92502C332DC5000C5930 /* Home */,
+				C92F924F2C332D87000C5930 /* Map */,
 				C963A5672C0846AC00DC3AD4 /* Notification */,
 				C90CE5532BF3EC590036E9D4 /* Message */,
 				C905167F2BED99F800F8FE39 /* Market */,
@@ -801,10 +814,11 @@
 				C93BBAD12BE1185500B1A266 /* Items */,
 				C9FC95AB2BDB4C970020CD72 /* Post */,
 				C93BBAC02BDF958100B1A266 /* Profile */,
+				C9925BCD2BCF2F0B00E65DC3 /* Onboarding */,
+				C9925BA62BCC4FB400E65DC3 /* Authentication */,
 				C9925BC22BCCD02800E65DC3 /* VideoFeed.entitlements */,
 				C9925BBB2BCC8EC900E65DC3 /* Info.plist */,
 				C9925BAB2BCC562A00E65DC3 /* Manager */,
-				C9E5D8172BC25F5D007D9B5F /* View */,
 				C9E5D8142BC258A7007D9B5F /* Model */,
 				C9E5D8112BC2586E007D9B5F /* ViewModel */,
 				C9E5D7B12BC23B3F007D9B5F /* Utils */,
@@ -889,25 +903,6 @@
 				C9BFF0562C1620940064715E /* Report.swift */,
 			);
 			path = Model;
-			sourceTree = "<group>";
-		};
-		C9E5D8172BC25F5D007D9B5F /* View */ = {
-			isa = PBXGroup;
-			children = (
-				C9FC95A82BDA6F5D0020CD72 /* Map */,
-				C96464E52BD2DC7A00625CCC /* Home */,
-				C9925BCD2BCF2F0B00E65DC3 /* Onboarding */,
-				C9925BA62BCC4FB400E65DC3 /* Authentication */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		C9FC95A82BDA6F5D0020CD72 /* Map */ = {
-			isa = PBXGroup;
-			children = (
-				C9FC95A92BDA6F700020CD72 /* MapView.swift */,
-			);
-			path = Map;
 			sourceTree = "<group>";
 		};
 		C9FC95AB2BDB4C970020CD72 /* Post */ = {
@@ -1132,6 +1127,7 @@
 				C90516762BEC4A8900F8FE39 /* StoryPlayerView.swift in Sources */,
 				C963A5622C0814BA00DC3AD4 /* Notification.swift in Sources */,
 				C9925BD72BCF5A6700E65DC3 /* AvatarSetupView.swift in Sources */,
+				C92F92522C332EC1000C5930 /* AssetModel.swift in Sources */,
 				C9CAD1412C016C3700C29321 /* ListPeopleViewModel.swift in Sources */,
 				C9D247EF2C0CB6C200445ED6 /* UserSearchViewModel.swift in Sources */,
 				C9BFF0552C161F4D0064715E /* ProfileReportView.swift in Sources */,
@@ -1387,7 +1383,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.localife.application;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1423,7 +1419,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.localife.application;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
