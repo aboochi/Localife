@@ -104,7 +104,7 @@ struct FeedSlideView: View {
                                     .font(.system(size: 13, weight: .semibold))
                                     .padding()
                                     .background(.white)
-                                    .cornerRadius(15)
+                                    .cornerRadius(20)
                                     .padding()
                               
                             }
