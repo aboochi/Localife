@@ -47,7 +47,6 @@ final class ListingManager{
     }
     
     
-    
     private func listingQuestionRepliesCollection(listingId: String, questionId: String) -> CollectionReference {
         listingQuestionDocument(listingId: listingId, questionId: questionId).collection("QuestionReplies")
     }

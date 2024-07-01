@@ -22,6 +22,8 @@ struct ListingQuestionView: View {
     @State var actionOrder: CommentActionType = .noAction
     @State var state: SwipeState = .untouched
     @FocusState private var focus: FocusableField?
+    @State var path = NavigationPath()
+
 
 
 
@@ -33,7 +35,7 @@ struct ListingQuestionView: View {
     
     var body: some View {
         ZStack{
-            NavigationStack{
+            NavigationStack(path: $path){
                 VStack() {
                     Text("Questions")
                         .foregroundColor(.black)
@@ -47,7 +49,7 @@ struct ListingQuestionView: View {
                         
                         LazyVStack(alignment: .leading, spacing: 24) {
                             ForEach(viewModel.questions){ question in
-                                QuestionsCellView(viewModel: QuestionCellViewModel(question: question, currentUser: session.dbUser), bufferQuestion: $bufferQuestion, actionOrder: $actionOrder, replySent: $replySent, state: $state, postOwnerUsername: viewModel.listing.user?.username ?? "unknown")
+                                QuestionsCellView(viewModel: QuestionCellViewModel(question: question, currentUser: session.dbUser), bufferQuestion: $bufferQuestion, actionOrder: $actionOrder, replySent: $replySent, state: $state, postOwnerUsername: viewModel.listing.user?.username ?? "unknown", path: $path)
                             }
                         }
                     }
@@ -84,6 +86,9 @@ struct ListingQuestionView: View {
                     
                     commentIput()
                 }
+                
+                .modifier(Navigationmodifier(path: $path))
+
                 
                 .onTapGesture {
                     focus = nil

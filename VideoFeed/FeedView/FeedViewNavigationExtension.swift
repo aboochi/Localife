@@ -29,6 +29,7 @@ enum NavigationDestinationTypeEnum{
     case post
     case listing
     case commentLiker
+    case questionLiker
     case chatbox
 }
 
@@ -37,6 +38,7 @@ struct NavigationValuegeneral : Hashable{
     let user: DBUser?
     let post: Post?
     let comment: Comment?
+    let question: Question?
     let listing: Listing?
     let profileViewModel: ProfileViewModel?
     let listingViewModel: ListingViewModel?
@@ -58,6 +60,7 @@ struct NavigationValuegeneral : Hashable{
                 lhs.user == rhs.user &&
                 lhs.post == rhs.post &&
                 lhs.comment == rhs.comment &&
+                lhs.question == rhs.question &&
                 lhs.listing == rhs.listing &&
                 lhs.userId == rhs.userId &&
                 lhs.profileViewModel === rhs.profileViewModel &&
@@ -75,6 +78,7 @@ struct NavigationValuegeneral : Hashable{
             hasher.combine(user)
             hasher.combine(post)
             hasher.combine(comment)
+            hasher.combine(question)
             hasher.combine(listing)
             hasher.combine(userId)
             if let profileViewModel = profileViewModel {
@@ -94,11 +98,12 @@ struct NavigationValuegeneral : Hashable{
     
  
    
-    init(type: NavigationDestinationTypeEnum, user: DBUser? = nil, post: Post? = nil, comment: Comment? = nil, listing: Listing? = nil, profileViewModel: ProfileViewModel? = nil, listingViewModel: ListingViewModel? = nil, messageViewModel: MessageViewModel? = nil, chatViewModel: ChatViewModel? = nil, index: Int? = nil, contentId: String? = nil, userId: String? = nil) {
+    init(type: NavigationDestinationTypeEnum, user: DBUser? = nil, post: Post? = nil, comment: Comment? = nil, question: Question? = nil, listing: Listing? = nil, profileViewModel: ProfileViewModel? = nil, listingViewModel: ListingViewModel? = nil, messageViewModel: MessageViewModel? = nil, chatViewModel: ChatViewModel? = nil, index: Int? = nil, contentId: String? = nil, userId: String? = nil) {
         self.type = type
         self.user = user
         self.post = post
         self.comment = comment
+        self.question = question
         self.listing = listing
         self.profileViewModel = profileViewModel
         self.listingViewModel = listingViewModel
@@ -285,6 +290,16 @@ struct Navigationmodifier: ViewModifier{
                         ChatBoxView(chatClosed: .constant(""), closeNewMessage: .constant(false), path: $path)
                             .environmentObject(chatViewModel)
                             .environmentObject(session)
+                    }
+                case .questionLiker:
+                    
+                    if let question = value.question{
+                        let user = DBUser(uid: "")
+                        let userType: UserTypeEnum = question.parentQuestionId == nil ? .questionLiker : .questionReplyLiker
+                        
+                        ListPeopleView(viewModel: ListPeopleViewModel(currentUser: session.dbUser, user: user), userType:  userType, contentId: value.contentId,  question: question,  path: $path)
+                            .environmentObject(session)
+                        
                     }
                 }
                 

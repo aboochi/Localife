@@ -16,6 +16,8 @@ enum UserTypeEnum{
     case postLiker
     case commentLiker
     case replyLiker
+    case questionLiker
+    case questionReplyLiker
 }
 
 @MainActor
@@ -28,6 +30,8 @@ final class ListPeopleViewModel: ObservableObject{
     var lastDocumentPostLikers: DocumentSnapshot?
     var lastDocumentCommentLikers: DocumentSnapshot?
     var lastDocumentReplyLikers: DocumentSnapshot?
+    var lastDocumentQuestionLikers: DocumentSnapshot?
+    var lastDocumentQuestionReplyLikers: DocumentSnapshot?
 
 
     
@@ -36,6 +40,8 @@ final class ListPeopleViewModel: ObservableObject{
     @Published var postLikersIds: [String] = []
     @Published var commentLikersIds: [String] = []
     @Published var replyLikersIds: [String] = []
+    @Published var questionLikersIds: [String] = []
+    @Published var questionReplyLikersIds: [String] = []
 
     
     
@@ -45,6 +51,8 @@ final class ListPeopleViewModel: ObservableObject{
     @Published var postLikers: [DBUser] = []
     @Published var commentLikers: [DBUser] = []
     @Published var replyLikers: [DBUser] = []
+    @Published var questionLikers: [DBUser] = []
+    @Published var questionReplyLikers: [DBUser] = []
 
     
     let currentUser: DBUser
@@ -153,6 +161,32 @@ final class ListPeopleViewModel: ObservableObject{
     }
     
     
+    func getQuestionLikers(question: Question) async throws{
+        
+        if questionLikers.count > 0 && lastDocumentQuestionLikers == nil{ return }
+        
+        let results = try await ListingManager.shared.getQuestionLikersIdByTime(listingId: question.listingId, questionId: question.id, count: 10, lastDocument: lastDocumentQuestionLikers)
+        lastDocumentQuestionLikers = results.lastDocument
+        questionLikersIds.append(contentsOf: results.output)
+        try await getUsers(userIds: results.output, userType: .questionLiker)
+    }
+    
+    func getQuestionReplyLikers(reply: Question) async throws{
+        
+        if questionReplyLikers.count > 0 && lastDocumentQuestionReplyLikers == nil{ return }
+        
+        if let questionId = reply.parentQuestionId{
+            
+            let results = try await ListingManager.shared.getReplyLikersIdByTime(listingId: reply.listingId, questionId: questionId , replyId: reply.id, count: 10, lastDocument: lastDocumentQuestionReplyLikers)
+            
+            lastDocumentQuestionReplyLikers = results.lastDocument
+            questionReplyLikersIds.append(contentsOf: results.output)
+            try await getUsers(userIds: results.output, userType: .questionReplyLiker)
+        }
+    }
+    
+    
+    
     func getUsers(userIds: [String], userType: UserTypeEnum) async throws{
         for userId in userIds{
             
@@ -173,6 +207,10 @@ final class ListPeopleViewModel: ObservableObject{
                     commentLikers.append(updatedUser)
                 case .replyLiker:
                     replyLikers.append(updatedUser)
+                case .questionLiker:
+                    questionLikers.append(updatedUser)
+                case .questionReplyLiker:
+                    questionReplyLikers.append(updatedUser)
                 }
             }catch{
                 continue

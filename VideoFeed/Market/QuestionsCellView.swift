@@ -21,6 +21,8 @@ struct QuestionsCellView: View {
     let postOwnerUsername: String
     @State var updatedQuestionContent: String?
     @State var actionOrderLikersList: FollowActionOrder = .none
+    @Binding var path: NavigationPath
+
     
     
 
@@ -298,10 +300,12 @@ struct QuestionsCellView: View {
         let like = question.likeNumber +  (viewModel.likeOffset[question.id] ?? 0)
         if like > 0{
             
-            
-            NavigationLink {
-               // ListPeopleView(userIds: $viewModel.questionlikerIds, actionOrder: $actionOrderLikersList, selectedId: .constant(""), myFollowers:  false)
-                //    .environmentObject(session)
+           
+            Button {
+              
+                let value = NavigationValuegeneral(type: .questionLiker, question: question)
+                path.append(value)
+                
             } label: {
                 Text("\(like) \(like > 1 ? "Likes" : "Like")")
                     .font(.system(size: 12, weight: .semibold))

@@ -25,17 +25,20 @@ struct ListPeopleView: View {
     let userType: UserTypeEnum
     let contentId: String?
     let comment: Comment?
+    let question: Question?
+
     @Binding var path: NavigationPath
     
   
 
 
 
-    init(viewModel: ListPeopleViewModel, userType: UserTypeEnum, contentId: String?, comment: Comment? = nil, path: Binding<NavigationPath>) {
-        self._viewModel = StateObject(wrappedValue: viewModel) 
+    init(viewModel: ListPeopleViewModel, userType: UserTypeEnum, contentId: String?, comment: Comment? = nil, question: Question? = nil, path: Binding<NavigationPath>) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
         self.userType = userType
         self.contentId = contentId
         self.comment = comment
+        self.question = question
         self._path = path
     }
     
@@ -98,6 +101,10 @@ struct ListPeopleView: View {
             return viewModel.commentLikers
         case .replyLiker:
             return viewModel.replyLikers
+        case .questionLiker:
+            return viewModel.questionLikers
+        case .questionReplyLiker:
+            return viewModel.questionReplyLikers
         }
     }
     
@@ -125,6 +132,14 @@ struct ListPeopleView: View {
                 if let reply = comment, let parentCommentId = reply.parentCommentId{
                     try await viewModel.getReplyLikers(reply: reply)
                 }
+            case .questionLiker:
+                if let question = question{
+                    try await viewModel.getQuestionLikers(question: question)
+                }
+            case .questionReplyLiker:
+                if let question = question, let parentQuestionId = question.parentQuestionId{
+                    try await viewModel.getQuestionReplyLikers(reply: question)
+                }
             }
         }
     }
@@ -145,6 +160,10 @@ struct ListPeopleView: View {
             case .commentLiker:
                 print("")
             case .replyLiker:
+                print("")
+            case .questionLiker:
+                print("")
+            case .questionReplyLiker:
                 print("")
             }
         }

@@ -10,7 +10,7 @@
 import Foundation
 import FirebaseFirestore
 
-struct Question: Codable, Identifiable{
+struct Question: Codable, Identifiable, Hashable{
     let id: String
     let listingId: String
     var questionOwnerId: String
