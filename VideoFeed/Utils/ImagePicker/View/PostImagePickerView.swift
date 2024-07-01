@@ -102,37 +102,7 @@ struct PostImagePickerView: View {
                 
                 
                 ImagePickerLibraryGridView(viewModel: viewModel, spacing: spacing)
-                    .overlay(
-                        
-                        Button(action: {
-                            if viewModel.mode == .post{
-                                viewModel.mode = .story
-                                viewModel.setToFixedAspectRatio = true
-                                viewModel.dictatedAspectRatio = 0.5625
-                                viewModel.choiceLimit = 1
-                                viewModel.resetframeProperties()
-                            } else{
-                                viewModel.mode = .post
-                                viewModel.setToFixedAspectRatio = false
-                                viewModel.choiceLimit = 10
-                                viewModel.resetframeProperties()
-
-                            }
-                        }, label: {
-                            Text(viewModel.mode == .post ? "STORY" : "POST")
-                                .padding()
-                                .foregroundColor(.white)
-                                .background(
-                                           Capsule()
-                                               .fill(Color.black.opacity(0.6))
-                                       )
-                                .padding(.trailing, 30)
-                                .padding(.bottom, 30)
-                        })
-                        
-                        
-                        ,alignment: .bottomTrailing
-                    )
+                   
         
                 
             }
@@ -155,7 +125,7 @@ struct PostImagePickerView: View {
         }
         
         .alert(isPresented: $viewModel.permissionAlertVisible) {
-            Alert (title: Text("Camera access required to take photos"),
+            Alert (title: Text("Gallery access required to share photos"),
                    message: Text("Go to Settings?"),
                    primaryButton: .default(Text("Settings"), action: {
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)

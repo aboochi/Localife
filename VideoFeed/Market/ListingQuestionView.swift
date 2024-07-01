@@ -180,7 +180,10 @@ struct ListingQuestionView: View {
                         .focused($focus, equals: .username)
                         .submitLabel(.send)
                         .onSubmit {
-                            questionAction()
+                            
+                            if !questionText.isEmpty{
+                                questionAction()
+                            }
                         }
                     
                  
@@ -190,8 +193,9 @@ struct ListingQuestionView: View {
                     }, label: {
                         Text("Send")
                             .bold()
-                            .foregroundColor(.black)
+                            .foregroundColor(.black.opacity(questionText.isEmpty ? 0.5: 1))
                     })
+                    .disabled(questionText.isEmpty)
                     
                   
                 }.padding(.horizontal)

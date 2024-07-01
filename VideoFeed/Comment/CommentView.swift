@@ -213,7 +213,10 @@ struct CommentsView: View {
                         .focused($focus, equals: .username)
                         .submitLabel(.send)
                         .onSubmit {
-                            commentAction()
+                            
+                            if !commentText.isEmpty{
+                                commentAction()
+                            }
                         }
                     
                  
@@ -225,8 +228,10 @@ struct CommentsView: View {
                     } label: {
                         Text("Send")
                             .bold()
-                            .foregroundColor(.black)
+                            .foregroundColor(.black.opacity(commentText.isEmpty ? 0.5 : 1))
+                        
                     }
+                    .disabled(commentText.isEmpty)
 
               
                   

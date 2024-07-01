@@ -72,7 +72,7 @@ struct ProfileImagePickerView: View {
         }
         
         .alert(isPresented: $viewModel.permissionAlertVisible) {
-            Alert (title: Text("Camera access required to take photos"),
+            Alert (title: Text("Gallery access required to share photos"),
                    message: Text("Go to Settings?"),
                    primaryButton: .default(Text("Settings"), action: {
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
