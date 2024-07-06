@@ -119,7 +119,7 @@ struct FeedView: View {
                                 Task{
                                     print("appeared posts: >>>>\(newValue)                 viewModel.posts.count - 1  >>>>>>>>>\(viewModel.posts.count - 1)"    )
 
-                                    try await viewModel.fetchPost(lastTime: session.dbUser.lastSeenPostTime)
+                                    try await viewModel.fetchNewPost()
                                     print("after >>>>>>>>>>>. viewModel.posts.count - 1  >>>>>>>>>\(viewModel.posts.count - 1)"    )
                                 }
                             }
@@ -178,14 +178,14 @@ struct FeedView: View {
                 .scrollDisabled(isZooming)
 
                 .refreshable {
-                    if viewModel.lastDocument != nil{
+                   // if viewModel.lastDocument != nil{
                         Task{
                             viewModel.posts = []
-                            viewModel.lastDocument = nil
+                           // viewModel.lastDocument = nil
                             viewModel.updateUser(session.dbUser)
-                            try await viewModel.fetchPost(lastTime: session.dbUser.lastSeenPostTime)
+                            try await viewModel.fetchNewPost()
                         }
-                    }
+                   // }
                 }
                 
         
@@ -201,8 +201,7 @@ struct FeedView: View {
                     session.requestIds = try await viewModel.getRequestIds()
                     session.postSeenIds = try await viewModel.getSeenPostIds()
                     
-                    try await viewModel.fetchPost(lastTime: session.dbUser.lastSeenPostTime)
-
+                    try await viewModel.fetchNewPost()
                     
                     if let firstPost = viewModel.posts.first{
                          if !session.postSeenIds.contains(firstPost.id)  {

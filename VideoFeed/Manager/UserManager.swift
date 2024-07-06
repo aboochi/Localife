@@ -490,8 +490,12 @@ final class UserManager {
         try await userDocument(userId: uid).updateData([DBUser.CodingKeys.bio.rawValue: bio])
     }
     
-    func updateLastSeenPostTime(uid: String, time: Timestamp) async throws{
-        try await userDocument(userId: uid).updateData([DBUser.CodingKeys.lastSeenPostTime.rawValue: time])
+    func updateLastSeenPost(uid: String, score: Int) async throws{
+        try await userDocument(userId: uid).updateData([DBUser.CodingKeys.lastSeenPostScore.rawValue: score])
+    }
+    
+    func updateFirstSeenPost(uid: String, score: Int) async throws{
+        try await userDocument(userId: uid).updateData([DBUser.CodingKeys.firstSeenPostScore.rawValue: score])
     }
     
     func deletePhotoUrl(uid: String) async throws{

@@ -192,6 +192,40 @@ final class PostManager{
         }
     }
     
+    func getNewPosts(highestScore: Int, count: Int, lastDocument: DocumentSnapshot?) async throws -> (output: [Post], lastDocument: DocumentSnapshot?) {
+        if let lastDocument = lastDocument {
+            return try await postsCollection
+                .whereField(Post.CodingKeys.score.rawValue, isGreaterThan: highestScore)
+                .order(by: Post.CodingKeys.score.rawValue, descending: true)
+                .start(afterDocument: lastDocument)
+                .limit(to: count)
+                .getDocumentsWithSnapshot(as: Post.self)
+        } else {
+            return try await postsCollection
+                .whereField(Post.CodingKeys.score.rawValue, isGreaterThan: highestScore)
+                .order(by: Post.CodingKeys.score.rawValue, descending: true)
+                .limit(to: count)
+                .getDocumentsWithSnapshot(as: Post.self)
+        }
+    }
+    
+    func getOldPosts(lowestScore: Int, count: Int, lastDocument: DocumentSnapshot?) async throws -> (output: [Post], lastDocument: DocumentSnapshot?) {
+        if let lastDocument = lastDocument {
+            return try await postsCollection
+                .whereField(Post.CodingKeys.score.rawValue, isLessThan: lowestScore)
+                .order(by: Post.CodingKeys.score.rawValue, descending: true)
+                .start(afterDocument: lastDocument)
+                .limit(to: count)
+                .getDocumentsWithSnapshot(as: Post.self)
+        } else {
+            return try await postsCollection
+                .whereField(Post.CodingKeys.score.rawValue, isLessThan: lowestScore)
+                .order(by: Post.CodingKeys.score.rawValue, descending: true)
+                .limit(to: count)
+                .getDocumentsWithSnapshot(as: Post.self)
+        }
+    }
+    
     
     func getPostsByLikeAndId(userId: String, count: Int, lastDocument: DocumentSnapshot?) async throws -> (output: [Post], lastDocument: DocumentSnapshot?) {
         if let lastDocument = lastDocument {

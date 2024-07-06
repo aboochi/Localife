@@ -47,7 +47,8 @@ struct DBUser: Codable, Identifiable, Hashable {
     var bio: String?
     var reportNumber: Int = 0
     var listingCategory: [String]
-    var lastSeenPostTime: Timestamp
+    var firstSeenPostScore: Int
+    var lastSeenPostScore: Int
     var followedByYou: Bool?
     var followingYou: Bool?
     var youRequested: Bool?
@@ -92,7 +93,8 @@ struct DBUser: Codable, Identifiable, Hashable {
         self.hiddenPostIds =  []
         self.bio = nil
         self.listingCategory = []
-        self.lastSeenPostTime = Timestamp(seconds: 0, nanoseconds: 0)
+        self.firstSeenPostScore = 0
+        self.lastSeenPostScore = 1000000000000
         self.followedByYou = false
         self.followingYou = false
         self.youRequested = false
@@ -156,7 +158,8 @@ struct DBUser: Codable, Identifiable, Hashable {
         self.hiddenPostIds =  []
         self.bio = nil
         self.listingCategory = []
-        self.lastSeenPostTime = Timestamp(seconds: 0, nanoseconds: 0)
+        self.firstSeenPostScore = 0
+        self.lastSeenPostScore = 1000000000000
         self.followedByYou = false
         self.followingYou = false
         self.youRequested = false
@@ -199,7 +202,8 @@ struct DBUser: Codable, Identifiable, Hashable {
         case hiddenPostIds = "hiddenPostIds"
         case bio = "bio"
         case listingCategory = "listingCategory"
-        case lastSeenPostTime = "lastSeenPostTime"
+        case firstSeenPostScore = "firstSeenPostScore"
+        case lastSeenPostScore = "lastSeenPostScore"
         case followedByYou = "followedByYou"
         case followingYou = "followingYou"
         case youRequested = "youRequested"

@@ -102,7 +102,7 @@ final class FeedCellViewModel: ObservableObject{
         
         //try await PostManager.shared.addSeen(postId: post.id, uid: currentUser.id)
         
-        try await UserManager.shared.updateLastSeenPostTime(uid: currentUser.id, time: postTime)
+       
     }
     
 }

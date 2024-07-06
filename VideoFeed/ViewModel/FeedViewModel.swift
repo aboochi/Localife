@@ -18,13 +18,16 @@ final class FeedViewModel: ObservableObject{
     @Published var playerDict: [String: AVPlayer] = [:]
     @Published var playedPostIndex: Int = 0
     
-    var lastDocument: DocumentSnapshot?
+    var lastNewDocument: DocumentSnapshot?
+    var lastOldDocument: DocumentSnapshot?
+
     var user: DBUser
     var MessageviewModel: MessageViewModel
     var storyViewModel = StoryViewModel()
 
     
     init(user: DBUser){
+        
         self.user = user
         self.MessageviewModel = MessageViewModel(user: user)
         
@@ -34,24 +37,38 @@ final class FeedViewModel: ObservableObject{
         self.user = user
     }
     
+   
     
-    
-    
-    func fetchPost(lastTime: Timestamp) async throws{
+    func fetchNewPost() async throws{
         
-
-        if lastDocument == nil && posts.count > 0{
-            
-            print("satisfied")
-
-            return
-        }
+       print("user.firstSeenPostScore: >>>>>>>>>>>>>>>>  \(user.firstSeenPostScore)")
+       // if lastNewDocument == nil && posts.count > 0{return}
         
         do{
-            let fetchResult = try await PostManager.shared.getPostsByTime(count: 10, lastTime: lastTime, lastDocument: lastDocument)
-            lastDocument = fetchResult.lastDocument
-            //print("posts: >>>>>>>>>>>>>>>>>> \(fetchResult.output.count)")
-            //save posts locally
+            let fetchResult = try await PostManager.shared.getNewPosts(highestScore: user.firstSeenPostScore, count: 10, lastDocument: nil)
+            //lastNewDocument = fetchResult.lastDocument
+            if fetchResult.output.count < 1{
+                try await fetchOldPost()
+            }else{
+                try await fetchAndsetPostOwner(fetchedPosts: fetchResult.output)
+                try await savePostsLocally()
+            }
+        }catch{
+            print("failed to fetch >>>>>>> \(error)")
+        }
+    }
+    
+    func fetchOldPost() async throws{
+        
+
+       // if lastNewDocument == nil && posts.count > 0{return}
+        print("user.lastSeenPostScore: >>>>>>>>>>>>>>>>  \(user.lastSeenPostScore)")
+
+        
+        do{
+            let fetchResult = try await PostManager.shared.getOldPosts(lowestScore: user.lastSeenPostScore, count: 10, lastDocument: nil)
+            //lastNewDocument = fetchResult.lastDocument
+           
             try await fetchAndsetPostOwner(fetchedPosts: fetchResult.output)
             try await savePostsLocally()
         }catch{
@@ -66,19 +83,25 @@ final class FeedViewModel: ObservableObject{
     }
     
     func fetchAndsetPostOwner( fetchedPosts: [Post]) async throws{
-        //print("number of fetch posts before filtering >>>>>>>>  \(fetchedPosts.count)")
-        let shuffledPosts = fetchedPosts.shuffled()
-        for var post in shuffledPosts{
+        
+        
+        for var post in fetchedPosts{
             do{
                 try await post.setUserOwner()
                 
                 if let userOwner = post.user, !user.hiddenPostIds.contains(post.id), !user.blockedIds.contains(post.ownerUid), !userOwner.blockedIds.contains(user.id), post.ownerUid != user.id{
                     self.posts.append(post)
+                    user.firstSeenPostScore = max(Int(post.time.dateValue().timeIntervalSince1970), post.score)
+                    user.lastSeenPostScore = min(Int(post.time.dateValue().timeIntervalSince1970), post.score)
+                    
                 }
             } catch{
                 continue
             }
         }
+        try await UserManager.shared.updateLastSeenPost(uid: user.id, score: user.lastSeenPostScore)
+        try await UserManager.shared.updateFirstSeenPost(uid: user.id, score: user.firstSeenPostScore)
+
     }
     
     func getSavedPostIds() async throws -> [String]{

@@ -33,15 +33,17 @@ struct Post: Codable, Identifiable , Hashable {
     var ownerPhotoUrl: String
     var reportNumber: Int = 0
     var seenUserIds: [String]
+    var score: Int
 
    
     var user: DBUser?
     
     init(id: String, ownerUid: String, caption: String = "", category: String = "general", urls: [String], imageUrls: [String], thumbnailUrls: [String], aspectRaio: CGFloat, ownerUsername: String, ownerPhotoUrl: String){
            
+           let currentTime = Timestamp()
            self.id = id
            self.ownerUid = ownerUid
-           self.time = Timestamp()
+           self.time = currentTime
            self.caption = caption
            self.likeNumber = 0
            self.commentNumber = 0
@@ -55,6 +57,7 @@ struct Post: Codable, Identifiable , Hashable {
            self.ownerPhotoUrl = ownerPhotoUrl
            self.reportNumber = 0
            self.seenUserIds = []
+           self.score =  Int(currentTime.dateValue().timeIntervalSince1970)
 
        
         
@@ -80,6 +83,7 @@ struct Post: Codable, Identifiable , Hashable {
             case ownerPhotoUrl = "ownerPhotoUrl"
             case reportNumber = "reportNumber"
             case seenUserIds = "seenUserIds"
+            case score = "score"
              
 
             
