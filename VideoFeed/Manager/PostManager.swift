@@ -196,14 +196,14 @@ final class PostManager{
         if let lastDocument = lastDocument {
             return try await postsCollection
                 .whereField(Post.CodingKeys.score.rawValue, isGreaterThan: highestScore)
-                .order(by: Post.CodingKeys.score.rawValue, descending: true)
+                .order(by: Post.CodingKeys.score.rawValue, descending: false)
                 .start(afterDocument: lastDocument)
                 .limit(to: count)
                 .getDocumentsWithSnapshot(as: Post.self)
         } else {
             return try await postsCollection
                 .whereField(Post.CodingKeys.score.rawValue, isGreaterThan: highestScore)
-                .order(by: Post.CodingKeys.score.rawValue, descending: true)
+                .order(by: Post.CodingKeys.score.rawValue, descending: false)
                 .limit(to: count)
                 .getDocumentsWithSnapshot(as: Post.self)
         }
@@ -323,6 +323,8 @@ final class PostManager{
         try await postLikeDocument(postId: postId, uid: uid).setData(["time": Timestamp(), "id": uid])
         try await userPostLikesDocument(postId: postId, uid: uid).setData(["time": Timestamp(), "id": postId])
         try await postDocument(postId: postId).updateData([Post.CodingKeys.likeNumber.rawValue : FieldValue.increment(1.0)])
+        try await postDocument(postId: postId).updateData([Post.CodingKeys.score.rawValue : FieldValue.increment(3000.0)])
+
 
     }
     
@@ -345,6 +347,8 @@ final class PostManager{
         try await postLikeDocument(postId: postId, uid: uid).delete()
         try await userPostLikesDocument(postId: postId, uid: uid).delete()
         try await postDocument(postId: postId).updateData([Post.CodingKeys.likeNumber.rawValue : FieldValue.increment(-1.0)])
+        try await postDocument(postId: postId).updateData([Post.CodingKeys.score.rawValue : FieldValue.increment(-3000.0)])
+
 
     }
     
@@ -362,6 +366,8 @@ final class PostManager{
         
         try  postCommentDocument(postId: postId, commentId: comment.id).setData(from: comment, merge: false)
         try await postDocument(postId: postId).updateData([Post.CodingKeys.commentNumber.rawValue : FieldValue.increment(1.0)])
+        try await postDocument(postId: postId).updateData([Post.CodingKeys.score.rawValue : FieldValue.increment(2000.0)])
+
 
     }
     
@@ -441,6 +447,8 @@ final class PostManager{
     func removeComment(postId: String, commentId: String) async throws{
         try await postCommentDocument(postId: postId, commentId: commentId).delete()
         try await postDocument(postId: postId).updateData([Post.CodingKeys.commentNumber.rawValue : FieldValue.increment(-1.0)])
+        try await postDocument(postId: postId).updateData([Post.CodingKeys.score.rawValue : FieldValue.increment(-2000.0)])
+
     }
     
     

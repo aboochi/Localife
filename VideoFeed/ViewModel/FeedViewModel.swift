@@ -20,16 +20,25 @@ final class FeedViewModel: ObservableObject{
     
     var lastNewDocument: DocumentSnapshot?
     var lastOldDocument: DocumentSnapshot?
+    @Published var lastDocument: DocumentSnapshot?
+
 
     var user: DBUser
     var MessageviewModel: MessageViewModel
     var storyViewModel = StoryViewModel()
+    
+    var previousNewScore : Int
+    var tempOldScore: Int
 
     
     init(user: DBUser){
         
         self.user = user
         self.MessageviewModel = MessageViewModel(user: user)
+        previousNewScore = user.firstSeenPostScore
+        tempOldScore = user.lastSeenPostScore
+        setSeenrecord()
+        
         
     }
     
@@ -37,19 +46,40 @@ final class FeedViewModel: ObservableObject{
         self.user = user
     }
     
-   
+    func updateUser() async throws{
+        let newUser = try await UserManager.shared.getUser(userId: user.id)
+            self.user = newUser
+        
+    }
     
-    func fetchNewPost() async throws{
+    
+    
+    func setSeenrecord(){
+        
+        let currentTime: Int = Int(Date().timeIntervalSince1970)
+        let oneDay = 86400
+        previousNewScore = user.firstSeenPostScore
+        if user.firstSeenPostScore < currentTime - oneDay*5{
+            user.firstSeenPostScore = currentTime - oneDay*5
+            tempOldScore = currentTime - oneDay*5
+        }
+        
+    }
+    
+    func fetchNewPost(refresh: Bool) async throws{
         
        print("user.firstSeenPostScore: >>>>>>>>>>>>>>>>  \(user.firstSeenPostScore)")
        // if lastNewDocument == nil && posts.count > 0{return}
         
         do{
             let fetchResult = try await PostManager.shared.getNewPosts(highestScore: user.firstSeenPostScore, count: 10, lastDocument: nil)
-            //lastNewDocument = fetchResult.lastDocument
+            lastDocument = fetchResult.lastDocument
             if fetchResult.output.count < 1{
-                try await fetchOldPost()
+                try await fetchOldPost(refresh: refresh)
             }else{
+                if refresh{
+                    posts = []
+                }
                 try await fetchAndsetPostOwner(fetchedPosts: fetchResult.output)
                 try await savePostsLocally()
             }
@@ -58,19 +88,26 @@ final class FeedViewModel: ObservableObject{
         }
     }
     
-    func fetchOldPost() async throws{
+    func fetchOldPost(refresh: Bool) async throws{
         
 
        // if lastNewDocument == nil && posts.count > 0{return}
         print("user.lastSeenPostScore: >>>>>>>>>>>>>>>>  \(user.lastSeenPostScore)")
 
-        
+        var oldestScore: Int { if previousNewScore < tempOldScore{
+            return tempOldScore}else{
+                return user.lastSeenPostScore
+            }
+        }
         do{
-            let fetchResult = try await PostManager.shared.getOldPosts(lowestScore: user.lastSeenPostScore, count: 10, lastDocument: nil)
-            //lastNewDocument = fetchResult.lastDocument
-           
+            let fetchResult = try await PostManager.shared.getOldPosts(lowestScore: oldestScore, count: 10, lastDocument: nil)
+            lastDocument = fetchResult.lastDocument
+            if fetchResult.output.count > 1 && refresh{
+                posts = []
+            }
             try await fetchAndsetPostOwner(fetchedPosts: fetchResult.output)
             try await savePostsLocally()
+            
         }catch{
             print("failed to fetch >>>>>>> \(error)")
         }
@@ -89,10 +126,12 @@ final class FeedViewModel: ObservableObject{
             do{
                 try await post.setUserOwner()
                 
-                if let userOwner = post.user, !user.hiddenPostIds.contains(post.id), !user.blockedIds.contains(post.ownerUid), !userOwner.blockedIds.contains(user.id), post.ownerUid != user.id{
+                if let userOwner = post.user, !user.hiddenPostIds.contains(post.id), !user.blockedIds.contains(post.ownerUid), !userOwner.blockedIds.contains(user.id), post.ownerUid != user.id, !posts.contains(post){
                     self.posts.append(post)
-                    user.firstSeenPostScore = max(Int(post.time.dateValue().timeIntervalSince1970), post.score)
-                    user.lastSeenPostScore = min(Int(post.time.dateValue().timeIntervalSince1970), post.score)
+                    print("user.firstSeenPostScore >>>>>>>>>>>.\(user.firstSeenPostScore)   post score:   \(post.score)   user.lastSeenPostScore: \(user.lastSeenPostScore)")
+                    tempOldScore = min(tempOldScore, post.score)
+                    user.firstSeenPostScore = max(user.firstSeenPostScore, post.score)
+                    user.lastSeenPostScore = min(user.lastSeenPostScore, post.score)
                     
                 }
             } catch{

@@ -88,13 +88,7 @@ struct FeedView: View {
 
                         
                         .onChange(of: path.count, { oldValue, newValue in
-                            if newValue > oldValue{
-                                
-                                homeIndex.feedViewIsAppear = false
-                            }else{
-                                homeIndex.feedViewIsAppear = true
-
-                            }
+                                homeIndex.feedViewIsAppear = newValue < oldValue
                         })
                        
                        
@@ -103,10 +97,8 @@ struct FeedView: View {
                                 
                                 withAnimation{
                                     proxy.scrollTo(-1, anchor: .top)
-                                    appearedPostIndecis  = [ -2, -1, 0, 1, 2]
                                 }
                                 appearedPostIndecis  = [ -2, -1, 0, 1, 2]
-                               
                                 scrollToTop = false
                             }
                         }
@@ -117,16 +109,12 @@ struct FeedView: View {
                             
                             if newValue.contains(viewModel.posts.count - 1){
                                 Task{
-                                    print("appeared posts: >>>>\(newValue)                 viewModel.posts.count - 1  >>>>>>>>>\(viewModel.posts.count - 1)"    )
-
-                                    try await viewModel.fetchNewPost()
-                                    print("after >>>>>>>>>>>. viewModel.posts.count - 1  >>>>>>>>>\(viewModel.posts.count - 1)"    )
+                                    try await viewModel.fetchNewPost(refresh: false)
                                 }
                             }
                         })
                         
      
-                        
                         .onChange(of: uploadCompletedSteps) { oldValue, newValue in
                             let progress = uploadCompletedSteps / uploadAllSteps
                             print("progress: \(progress)")
@@ -142,31 +130,8 @@ struct FeedView: View {
                         .onChange(of: sentUrl) { oldValue, newValue in
                             if let url = newValue , url.count > 0{
                                 
-                               
-                                    showSentThumbnail = true
+                                showMessageAnimation()
                                     
-                                    isAnimating = true
-
-                                    // Start the animation
-                                    withAnimation(.easeInOut(duration: 1.0)) {
-                                        xOffset = 180
-                                        yOffset = -398
-                                        width = 5
-                                        height = 5
-                                    }
-                                    
-                                    // Reset the animation state after the animation completes
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.1) {
-                                        isAnimating = false
-                                        width = 70
-                                        height = 70
-                                        xOffset = 0
-                                        yOffset = 0
-                                        showSentThumbnail = false
-                                        sentUrl = nil
-                                    }
-                                    
-                              
                             }
                         }
                         
@@ -178,47 +143,24 @@ struct FeedView: View {
                 .scrollDisabled(isZooming)
 
                 .refreshable {
-                   // if viewModel.lastDocument != nil{
+                  
                         Task{
                             viewModel.posts = []
-                           // viewModel.lastDocument = nil
-                            viewModel.updateUser(session.dbUser)
-                            try await viewModel.fetchNewPost()
+                            try await viewModel.fetchNewPost(refresh: true)
                         }
-                   // }
-                }
+                   }
                 
         
             }
         
             .onAppear{
-                
-                Task{
-                    session.savedPostIds = try await viewModel.getSavedPostIds()
-                    session.savedListingIds = try await viewModel.getSavedListingIds()
-                    session.followerIds = try await viewModel.getFollowerIds()
-                    session.followingIds = try await viewModel.getFollowingIds()
-                    session.requestIds = try await viewModel.getRequestIds()
-                    session.postSeenIds = try await viewModel.getSeenPostIds()
-                    
-                    try await viewModel.fetchNewPost()
-                    
-                    if let firstPost = viewModel.posts.first{
-                         if !session.postSeenIds.contains(firstPost.id)  {
-                            session.postSeenIds.append(firstPost.id)
-                            try await viewModel.addPostSeen(postId: firstPost.id)
-                        }
-                    }
-
-
-                }
+                fetchData()
             }
         
          
             
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle("")
-        
             .navigationBarItems( leading: leadingBarItem, trailing:  trailingBarItem)
             .navigationBarHidden(homeIndex.isSearchExpanded)
             .edgesIgnoringSafeArea(homeIndex.isSearchExpanded ? [] : [])
@@ -249,11 +191,61 @@ struct FeedView: View {
                         
                 }
                 
-            
             }
-       
-        
         }
+    
+    
+   
+    
+    func fetchData(){
+        Task{
+            session.savedPostIds = try await viewModel.getSavedPostIds()
+            session.savedListingIds = try await viewModel.getSavedListingIds()
+            session.followerIds = try await viewModel.getFollowerIds()
+            session.followingIds = try await viewModel.getFollowingIds()
+            session.requestIds = try await viewModel.getRequestIds()
+            session.postSeenIds = try await viewModel.getSeenPostIds()
+            
+            try await viewModel.updateUser()
+            try await viewModel.fetchNewPost(refresh: false)
+            
+            if let firstPost = viewModel.posts.first{
+                 if !session.postSeenIds.contains(firstPost.id)  {
+                    session.postSeenIds.append(firstPost.id)
+                    try await viewModel.addPostSeen(postId: firstPost.id)
+                }
+            }
+
+
+        }
+
+    }
+    
+    func showMessageAnimation(){
+        
+        showSentThumbnail = true
+        
+        isAnimating = true
+
+        // Start the animation
+        withAnimation(.easeInOut(duration: 1.0)) {
+            xOffset = 180
+            yOffset = -398
+            width = 5
+            height = 5
+        }
+        
+        // Reset the animation state after the animation completes
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.1) {
+            isAnimating = false
+            width = 70
+            height = 70
+            xOffset = 0
+            yOffset = 0
+            showSentThumbnail = false
+            sentUrl = nil
+        }
+    }
     
     
     @ViewBuilder

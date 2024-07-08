@@ -57,10 +57,12 @@ struct DBUser: Codable, Identifiable, Hashable {
 
     init(auth: AuthDataUserModel, provider: [String], firstName: String? = "", lastName: String? = "", authProviderOption: AuthProviderOption = .anonymous) {
         
- 
+        let initialScore = Int(Date().timeIntervalSince1970) - (86400*5)
+        let randomNumber = DBUser.generateRandom10DigitString()
+        let guestUsername = "guest_" + randomNumber
         
         self.id = auth.uid
-        self.username = "unknown"
+        self.username = guestUsername
         self.isAnonymous = auth.isAnonymous
         self.authProviders = provider
         self.email = authProviderOption == .email ? auth.email : nil
@@ -93,8 +95,8 @@ struct DBUser: Codable, Identifiable, Hashable {
         self.hiddenPostIds =  []
         self.bio = nil
         self.listingCategory = []
-        self.firstSeenPostScore = 0
-        self.lastSeenPostScore = 1000000000000
+        self.firstSeenPostScore = initialScore
+        self.lastSeenPostScore = initialScore
         self.followedByYou = false
         self.followingYou = false
         self.youRequested = false
@@ -131,6 +133,8 @@ struct DBUser: Codable, Identifiable, Hashable {
 
 
     ) {
+        let initialScore = Int(Date().timeIntervalSince1970) - (86400*5)
+
         self.id = uid
         self.username = username
         self.isAnonymous = isAnonymous
@@ -158,8 +162,8 @@ struct DBUser: Codable, Identifiable, Hashable {
         self.hiddenPostIds =  []
         self.bio = nil
         self.listingCategory = []
-        self.firstSeenPostScore = 0
-        self.lastSeenPostScore = 1000000000000
+        self.firstSeenPostScore = initialScore
+        self.lastSeenPostScore = initialScore
         self.followedByYou = false
         self.followingYou = false
         self.youRequested = false
@@ -208,8 +212,17 @@ struct DBUser: Codable, Identifiable, Hashable {
         case followingYou = "followingYou"
         case youRequested = "youRequested"
 
-        
+
     
+    }
+    
+    static func generateRandom10DigitString() -> String {
+        var randomString = ""
+        for _ in 1...10 {
+            let randomDigit = Int.random(in: 0...9)
+            randomString.append(String(randomDigit))
+        }
+        return randomString
     }
 
 }
