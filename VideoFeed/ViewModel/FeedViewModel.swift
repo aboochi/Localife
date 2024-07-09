@@ -74,7 +74,7 @@ final class FeedViewModel: ObservableObject{
         do{
             let fetchResult = try await PostManager.shared.getNewPosts(highestScore: user.firstSeenPostScore, count: 10, lastDocument: nil)
             lastDocument = fetchResult.lastDocument
-            if fetchResult.output.count < 1{
+            if fetchResult.output.count < 4{
                 try await fetchOldPost(refresh: refresh)
             }else{
                 if refresh{
